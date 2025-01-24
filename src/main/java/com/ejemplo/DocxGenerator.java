@@ -5,17 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
 
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
-import org.apache.poi.xwpf.usermodel.XWPFTableCell;
-import org.apache.poi.xwpf.usermodel.XWPFTableRow;
-import org.apache.poi.xwpf.usermodel.XWPFHeader;
-import org.apache.poi.xwpf.usermodel.XWPFFooter;
+import org.apache.poi.xwpf.usermodel.*;
 
 
 
@@ -32,92 +23,51 @@ public class DocxGenerator {
          String salidaPattern = "C:\\Users\\carlos.mari\\OneDrive - Avvale S.p.A\\Documentos\\Informes Automatizados\\Test {{Client}} {{month}} {{year}}.docx";
  
          // Datos de ejemplo para reemplazar
-         List<HashMap<String, String>> listaDeDatos = new ArrayList<>();
-         
-         // Primer conjunto de datos
-         HashMap<String, String> datos1 = new HashMap<>();
-         datos1.put("{{month}}", "noviembre");
-         datos1.put("{{year}}", "2024");
-         datos1.put("{{ID}}", "1");
-         datos1.put("{{Title}}", "I241119_0041");
-         datos1.put("{{Description}}", "Desde Cognodata se reportan accesos repetidos a su SFTP. Estos accesos han supuesto que hayan bloqueado la IP de Mule. "+
-                "El problema se produjo a causa de que reforzaron las medidas de seguridad del SFTP de COGNODATA. Para resolverlo nos volvieron a meter en la whitelist y "+
-                "cambiamos la estrategia de pooling, este pasó de ser cada segundo a ser cada hora.");
-         datos1.put("{{Priority}}", "Normal");
-         datos1.put("{{Assignedto0}}", "Jhemili De Souza");
-         datos1.put("{{IssueSource}}", "https://sm-ev.servicedesk.serveo.com/index.php?PHPSESSID=198adeb1bc6506ab200d686e331a6547&internalurltime=1732234570&eventName=formEvent&target=379657&checksum=47b8c7c4caec13e308dc10b2eacfb780dccfe6e3&sender=%7B07ED9C68-6172-48EA-8A58-90912B0A283E%7D");
-         datos1.put("{{DateReported}}", "19/11/2024");
-         datos1.put("{{FechadeCierre}}", "26/11/2024");
-         datos1.put("{{Status}}", "Completado");
-         datos1.put("{{Client}}", "Serveo");
-         listaDeDatos.add(datos1);
-
-         // Segundo conjunto de datos
-         HashMap<String, String> datos2 = new HashMap<>();
-         datos2.put("{{month}}", "diciembre");
-         datos2.put("{{year}}", "2024");
-         datos2.put("{{ID}}", "2");
-         datos2.put("{{Title}}", "I241219_0041");
-         datos2.put("{{Description}}", "Desde Cognodata se reportan accesos repetidos a su SFTP. Estos accesos han supuesto que hayan bloqueado la IP de Mule. "+
-                "El problema se produjo a causa de que reforzaron las medidas de seguridad del SFTP de COGNODATA. Para resolverlo nos volvieron a meter en la whitelist y "+
-                "cambiamos la estrategia de pooling, este pasó de ser cada segundo a ser cada hora.");
-         datos2.put("{{Priority}}", "Normal");
-         datos2.put("{{Assignedto0}}", "Jhemili De Souza");
-         datos2.put("{{IssueSource}}", "https://sm-ev.servicedesk.serveo.com/index.php?PHPSESSID=198adeb1bc6506ab200d686e331a6547&internalurltime=1732234570&eventName=formEvent&target=379657&checksum=47b8c7c4caec13e308dc10b2eacfb780dccfe6e3&sender=%7B07ED9C68-6172-48EA-8A58-90912B0A283E%7D");
-         datos2.put("{{DateReported}}", "19/12/2024");
-         datos2.put("{{FechadeCierre}}", "26/12/2024");
-         datos2.put("{{Status}}", "Completado");
-         datos2.put("{{Client}}", "Serveo");
-         listaDeDatos.add(datos2);
-
-         DocxGenerator docxGenerator = new DocxGenerator();
-
-         String salidaPathFinal = "";
-
-         try {
-            salidaPathFinal = docxGenerator.generarInforme(listaDeDatos, plantillaPath, salidaPattern);
-            System.out.println("Documento generado correctamente: " + salidaPathFinal);
+         HashMap<String, String> datos = new HashMap<>();
+         datos.put("{{month}}", "noviembre");
+         datos.put("{{year}}", "2024");
+         datos.put("{{ID}}", "1");
+         datos.put("{{Title}}", "I241119_0041");
+         datos.put("{{Description}}", "Desde Cognodata se reportan accesos repetidos a su SFTP. Estos accesos han supuesto que hayan bloqueado la IP de Mule. "+
+         "El problema se produjo a causa de que reforzaron las medidas de seguridad del SFTP de COGNODATA. Para resolverlo nos volvieron a meter en la whitelist y "+
+         "cambiamos la estrategia de pooling, este pasó de ser cada segundo a ser cada hora.");
+         datos.put("{{Priority}}", "Normal");
+         datos.put("{{Assignedto0}}", "Jhemili De Souza");
+         datos.put("{{IssueSource}}", "https://sm-ev.servicedesk.serveo.com/index.php?PHPSESSID=198adeb1bc6506ab200d686e331a6547&internalurltime=1732234570&eventName=formEvent&target=379657&checksum=47b8c7c4caec13e308dc10b2eacfb780dccfe6e3&sender=%7B07ED9C68-6172-48EA-8A58-90912B0A283E%7D");
+         datos.put("{{DateReported}}", "19/11/2024");
+         datos.put("{{FechadeCierre}}", "26/11/2024");
+         datos.put("{{Status}}", "Completado");
+         datos.put("{{Client}}", "Serveo");
  
-        } catch (Exception e) {
-             e.printStackTrace();
+        try {
+            generateDocx(plantillaPath, salidaPattern, datos);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-     /**
-     * Método NO estático que encapsula toda la lógica de:
-     * 1. Leer la plantilla
-     * 2. Reemplazar/insertar datos en base a la lista de HashMaps
-     * 3. Guardar el resultado en la ruta de salida
-     *
-     * @param listaDeDatos   Lista de HashMap<String, String> con "n" conjuntos de datos.
-     * @param plantillaPath  Ruta a la plantilla DOCX.
-     * @param salidaPath     Ruta de salida del DOCX final.
-     * @throws IOException   En caso de error al leer/escribir archivos.
-     */
-    public String generarInforme(List<HashMap<String, String>> listaDeDatos,
-                               String plantillaPath,
-                               String salidaPath) throws IOException {
+    public static void generateDocx(String plantillaPath, String salidaPattern, HashMap<String, String> datos) throws IOException{
 
-        // 1) Leer la plantilla
-        XWPFDocument documento = readDocx(plantillaPath);
+        try {
+            // 1. Leer documento
+            XWPFDocument documento = readDocx(plantillaPath);
 
-        // 2) Por cada HashMap en la lista, se puede:
-        
-        for (HashMap<String, String> datos : listaDeDatos) {
+            // 2. Procesar el contenido (reemplazar marcadores dentro del DOCX)
             processDocument(documento, datos);
+
+            // 3. Construir la ruta de salida final reemplazando los placeholders ({{client}}, {{month}}, etc.)
+            String salidaPathFinal = buildOutputPath(salidaPattern, datos);
+
+            // 4. Guardar el documento con la nueva ruta
+            writeDocx(documento, salidaPathFinal);
+
+            System.out.println("Documento generado correctamente: " + salidaPathFinal);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        //3) Construir la ruta de salida final reemplazando los placeholders ({{client}}, {{month}}, etc.)
-        String salidaPathFinal = buildOutputPath(salidaPath, listaDeDatos.get(0));
-
-        // 4) Guardar el documento con la ruta final
-        writeDocx(documento, salidaPathFinal);
-
-        // Cerrar si fuera necesario
-        documento.close();
-
-        return salidaPathFinal;
     }
+
      /**
      * Lee un archivo DOCX de la ruta especificada y devuelve un objeto XWPFDocument.
      *
@@ -148,11 +98,15 @@ public class DocxGenerator {
      * Procesa el documento, reemplazando los marcadores en párrafos y tablas.
      *
      * @param document XWPFDocument a procesar
-     * @param datos    Mapa de reemplazos (por ej.: {{nombre}} -> "Carlos")
+     * @param datos    Mapa de reemplazos (por ej.: {{nombre}} -> "Carlos Mari")
      */
     public static void processDocument(XWPFDocument document, HashMap<String, String> datos) {
         // Reemplazar en párrafos del cuerpo principal
         for (XWPFParagraph parrafo : document.getParagraphs()) {
+            // Fusionar runs con el mismo estilo
+            mergeRunsWithSameStyle(parrafo);
+
+            // Reemplazar el texto en el párrafo    
             replaceTextInParagraph(parrafo, datos);
         }
 
@@ -161,45 +115,18 @@ public class DocxGenerator {
             for (XWPFTableRow fila : tabla.getRows()) {
                 for (XWPFTableCell celda : fila.getTableCells()) {
                     for (XWPFParagraph parrafo : celda.getParagraphs()) {
+                        // Fusionar runs con el mismo estilo
+                        mergeRunsWithSameStyle(parrafo);
+
+                        // Reemplazar el texto en el párrafo    
                         replaceTextInParagraph(parrafo, datos);
                     }
                 }
             }
         }
 
-        // Reemplazar en encabezados
-        for (XWPFHeader header : document.getHeaderList()) {
-            for (XWPFParagraph parrafo : header.getParagraphs()) {
-                replaceTextInParagraph(parrafo, datos);
-            }
-            // También procesar tablas en encabezados
-            for (XWPFTable tabla : header.getTables()) {
-                for (XWPFTableRow fila : tabla.getRows()) {
-                    for (XWPFTableCell celda : fila.getTableCells()) {
-                        for (XWPFParagraph parrafo : celda.getParagraphs()) {
-                            replaceTextInParagraph(parrafo, datos);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Reemplazar en pies de página
-        for (XWPFFooter footer : document.getFooterList()) {
-            for (XWPFParagraph parrafo : footer.getParagraphs()) {
-                replaceTextInParagraph(parrafo, datos);
-            }
-            // También procesar tablas en pies de página
-            for (XWPFTable tabla : footer.getTables()) {
-                for (XWPFTableRow fila : tabla.getRows()) {
-                    for (XWPFTableCell celda : fila.getTableCells()) {
-                        for (XWPFParagraph parrafo : celda.getParagraphs()) {
-                            replaceTextInParagraph(parrafo, datos);
-                        }
-                    }
-                }
-            }
-        }
+        // Si tu documento tiene encabezados o pies de página, podrías llamar a
+        // funciones similares que iteren sobre document.getHeaderList() y document.getFooterList().
     }
 
      /**
@@ -247,4 +174,65 @@ public class DocxGenerator {
         }
         return outputPath;
     }
+    /**
+     * Fusiona *runs* contiguos dentro de un párrafo que tengan el mismo estilo,
+     * de modo que sus textos se unifiquen en un solo run.
+     */
+    private static void mergeRunsWithSameStyle(XWPFParagraph paragraph) {
+        if (paragraph.getRuns().size() < 2) return;
+
+        int i = 0;
+        // Recorremos los runs y fusionamos los que tengan estilo equivalente
+        while (i < paragraph.getRuns().size() - 1) {
+            XWPFRun current = paragraph.getRuns().get(i);
+            XWPFRun next = paragraph.getRuns().get(i + 1);
+
+            if (haveSameStyle(current, next)) {
+                // Unificamos el texto
+                String combinedText = safeGetText(current) + safeGetText(next);
+                current.setText(combinedText, 0);
+
+                // Eliminamos el run siguiente, ya que lo hemos fusionado en current
+                paragraph.removeRun(i + 1);
+
+                // No incrementamos i, porque podría haber más runs luego que aún se fusionen con el actual
+            } else {
+                // Si no tienen el mismo estilo, pasamos al siguiente run
+                i++;
+            }
+        }
+    }
+
+    /** 
+     * Compara algunos atributos de estilo (negrita, cursiva, color, tamaño). 
+     * Amplía o reduce estos checks según tu necesidad.
+     */
+    private static boolean haveSameStyle(XWPFRun r1, XWPFRun r2) {
+        // Comparar negrita
+        if (r1.isBold() != r2.isBold()) return false;
+        // Comparar cursiva
+        if (r1.isItalic() != r2.isItalic()) return false;
+        // Comparar color
+        String c1 = r1.getColor();
+        String c2 = r2.getColor();
+        if ((c1 != null && !c1.equals(c2)) || (c1 == null && c2 != null)) {
+            return false;
+        }
+        // Comparar tamaño de fuente
+        if (r1.getFontSize() != r2.getFontSize()) {
+            return false;
+        }
+
+        // Si aquí no hemos devuelto false, consideramos que son "equivalentes"
+        return true;
+    }
+
+    /** 
+     * Evita NPE al obtener el texto de un run.
+     */
+    private static String safeGetText(XWPFRun run) {
+        String text = run.getText(0);
+        return text == null ? "" : text;
+    }
+
 } 
