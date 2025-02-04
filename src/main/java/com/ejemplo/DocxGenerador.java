@@ -4,8 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
@@ -28,11 +26,8 @@ public class DocxGenerador {
 
     /**
      * Método principal que orquesta la generación del documento.
-     * <p>
      * Lee la plantilla DOCX, realiza las sustituciones globales, duplica los bloques según
      * los datos proporcionados y genera el documento final en la ruta especificada.
-     * </p>
-     *
      * @param args No se utilizan argumentos en línea de comandos.
      */
     public static void main(String[] args) {
@@ -78,7 +73,7 @@ public class DocxGenerador {
         // En este ejemplo se usa "" ya que en la plantilla el bloque está delimitado por párrafos
         // que contienen exactamente "---".
         Map<String, List<HashMap<String, String>>> duplicableBlocks = new HashMap<>();
-        duplicableBlocks.put("", listaIncidencias);
+        duplicableBlocks.put("incidencia", listaIncidencias);
         // Ejemplo para otro bloque (en el futuro):
         // duplicableBlocks.put("OtroBloque", listaOtrosDatos);
 
@@ -91,16 +86,12 @@ public class DocxGenerador {
 
     /**
      * Orquesta la generación del documento DOCX.
-     * <p>
      * Este método realiza las siguientes acciones:
-     * <ol>
-     *   <li>Lee la plantilla DOCX.</li>
-     *   <li>Realiza las sustituciones globales en el documento.</li>
-     *   <li>Duplica los bloques identificados (por ejemplo, incidencias) según los datos proporcionados.</li>
-     *   <li>Construye la ruta de salida reemplazando los placeholders.</li>
-     *   <li>Guarda el documento final en el sistema de archivos.</li>
-     * </ol>
-     * </p>
+     *   - Lee la plantilla DOCX
+     *   - Realiza las sustituciones globales en el documento.
+     *   - Duplica los bloques identificados (por ejemplo, incidencias) según los datos proporcionados.
+     *   - Construye la ruta de salida reemplazando los placeholders.
+     *   - Guarda el documento final en el sistema de archivos.
      *
      * @param plantillaPath   Ruta del archivo plantilla DOCX.
      * @param salidaPattern   Ruta (con placeholders) para el archivo de salida.
@@ -161,12 +152,9 @@ public class DocxGenerador {
     }
 
     /**
-     * Procesa el documento realizando sustituciones de texto en párrafos y tablas.
-     * <p>
+     * Procesa el documento realizando sustituciones de texto en párrafos y tablas.     * 
      * Recorre todos los párrafos y celdas de tabla, llamando a {@link #replaceTextInParagraph(XWPFParagraph, Map)}
-     * para reemplazar los placeholders según el mapa de datos proporcionado.
-     * </p>
-     *
+     * para reemplazar los placeholders según el mapa de datos proporcionado.     
      * @param document Objeto XWPFDocument a procesar.
      * @param datos    Mapa de datos con placeholders y sus valores.
      */
@@ -191,11 +179,8 @@ public class DocxGenerador {
 
     /**
      * Reemplaza los placeholders en un párrafo usando el mapa de datos proporcionado.
-     * <p>
      * Recorre cada "run" del párrafo y, si encuentra un placeholder (por ejemplo, "{{Client}}"),
      * lo sustituye por el valor correspondiente.
-     * </p>
-     *
      * @param parrafo Objeto XWPFParagraph a procesar.
      * @param datos   Mapa que contiene los placeholders y sus valores de reemplazo.
      */
@@ -216,7 +201,6 @@ public class DocxGenerador {
 
     /**
      * Construye la ruta de salida reemplazando los placeholders en la cadena del patrón de ruta.
-     *
      * @param pathPattern Cadena con placeholders (por ejemplo, "Test {{Client}} {{month}} {{year}}.docx").
      * @param datos       Mapa con los valores para reemplazar los placeholders.
      * @return La ruta final con los placeholders sustituidos por sus respectivos valores.
@@ -231,10 +215,8 @@ public class DocxGenerador {
 
     /**
      * Fusiona los "runs" contiguos dentro de un párrafo que tengan el mismo estilo.
-     * <p>
      * Esto ayuda a evitar problemas al realizar sustituciones, uniendo textos que comparten
      * atributos de estilo idénticos (como negrita, cursiva, color y tamaño de fuente).
-     * </p>
      *
      * @param paragraph Párrafo (XWPFParagraph) cuyo contenido se desea fusionar.
      */
@@ -256,10 +238,7 @@ public class DocxGenerador {
 
     /**
      * Compara el estilo de dos "runs" para determinar si son iguales.
-     * <p>
-     * Se comparan atributos como negrita, cursiva, color y tamaño de fuente.
-     * </p>
-     *
+     * Se comparan atributos como negrita, cursiva, color y tamaño de fuente.     *
      * @param r1 Primer run.
      * @param r2 Segundo run.
      * @return {@code true} si ambos runs tienen el mismo estilo; {@code false} en caso contrario.
@@ -276,7 +255,6 @@ public class DocxGenerador {
 
     /**
      * Retorna el texto de un run o una cadena vacía si es nulo.
-     *
      * @param run Objeto XWPFRun del cual se desea obtener el texto.
      * @return El texto contenido en el run, o "" si es nulo.
      */
@@ -287,17 +265,12 @@ public class DocxGenerador {
 
     /**
      * Duplica un bloque de párrafos delimitado por marcadores y realiza la sustitución de etiquetas.
-     * <p>
      * Se asume que en la plantilla el bloque a duplicar está comprendido entre dos párrafos
      * cuyo texto (tras aplicar trim) es igual a:
-     * <ul>
-     *   <li>Si no se usa identificador: "---"</li>
-     *   <li>Si se usa identificador (por ejemplo, "Incidencias"): "---Incidencias---"</li>
-     * </ul>
+     *   - Si no se usa identificador: "---"+
+     *   - Si se usa identificador (por ejemplo, "Incidencias"): "---Incidencias---"
      * El bloque (incluyendo los marcadores) se elimina y se inserta un nuevo bloque por cada entrada
      * en la lista de datos, donde en cada duplicado se sustituyen los placeholders con los valores del HashMap.
-     * </p>
-     *
      * @param document   Objeto XWPFDocument sobre el que se realizará la operación.
      * @param blockId    Identificador del bloque. Si es cadena vacía o {@code null}, se buscarán marcadores con el texto "---".
      * @param listaDatos Lista de HashMap, donde cada HashMap contiene los datos para reemplazar los placeholders en un duplicado del bloque.
@@ -372,40 +345,5 @@ public class DocxGenerador {
                 insertionPos++; // Incrementar la posición para el siguiente párrafo.
             }
         }
-    }
-    
-    /**
-     * Extrae de un texto todos los placeholders que sigan el patrón "{{...}}".
-     *
-     * @param text Texto del cual se desean extraer los placeholders.
-     * @return Una lista de cadenas con los placeholders encontrados.
-     */
-    public static List<String> extractPlaceholders(String text) {
-        List<String> placeholders = new ArrayList<>();
-        Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
-        Matcher matcher = pattern.matcher(text);
-        while (matcher.find()){
-            placeholders.add(matcher.group());
-        }
-        return placeholders;
-    }
-
-    /**
-     * Recorre los párrafos del documento y, si encuentra placeholders en el formato "{{...}}",
-     * los imprime por consola.
-     *
-     * @param document Objeto XWPFDocument a analizar.
-     */
-    public static void printParagraphsToDuplicate(XWPFDocument document) {
-        System.out.println("Buscando párrafos a duplicar y sus etiquetas:");
-        for (XWPFParagraph parrafo : document.getParagraphs()) {
-            String text = parrafo.getText();
-            List<String> etiquetas = extractPlaceholders(text);
-            if (!etiquetas.isEmpty()){
-                System.out.println("Párrafo: " + text);
-                System.out.println("Etiquetas encontradas: " + etiquetas);
-            }
-        }
-        // (Opcional) Procesar párrafos en tablas de forma similar...
-    }
+    }      
 }
