@@ -9,6 +9,8 @@ import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFHeader;
+import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
@@ -171,6 +173,45 @@ public class DocxGenerador {
                     for (XWPFParagraph parrafo : celda.getParagraphs()) {
                         mergeRunsWithSameStyle(parrafo);
                         replaceTextInParagraph(parrafo, datos);
+                    }
+                }
+            }
+        }
+        // Procesar cabeceras (headers)
+        for (XWPFHeader header : document.getHeaderList()) {
+            // Procesar párrafos de la cabecera
+            for (XWPFParagraph parrafo : header.getParagraphs()) {
+                mergeRunsWithSameStyle(parrafo);
+                replaceTextInParagraph(parrafo, datos);
+            }
+            // Procesar tablas de la cabecera
+            for (XWPFTable tabla : header.getTables()) {
+                for (XWPFTableRow fila : tabla.getRows()) {
+                    for (XWPFTableCell celda : fila.getTableCells()) {
+                        for (XWPFParagraph parrafo : celda.getParagraphs()) {
+                            mergeRunsWithSameStyle(parrafo);
+                            replaceTextInParagraph(parrafo, datos);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Procesar pies de página (footers)
+        for (XWPFFooter footer : document.getFooterList()) {
+            // Procesar párrafos del pie de página
+            for (XWPFParagraph parrafo : footer.getParagraphs()) {
+                mergeRunsWithSameStyle(parrafo);
+                replaceTextInParagraph(parrafo, datos);
+            }
+            // Procesar tablas del pie de página
+            for (XWPFTable tabla : footer.getTables()) {
+                for (XWPFTableRow fila : tabla.getRows()) {
+                    for (XWPFTableCell celda : fila.getTableCells()) {
+                        for (XWPFParagraph parrafo : celda.getParagraphs()) {
+                            mergeRunsWithSameStyle(parrafo);
+                            replaceTextInParagraph(parrafo, datos);
+                        }
                     }
                 }
             }
